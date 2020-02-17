@@ -1,0 +1,131 @@
+%----------------------------------------------------------
+% P2a
+%
+% Make some digital audio signals and demonstrate filtering.
+% All signals are 4 seconds in duration.
+% - Make x1 a 250 Hz pure tone.
+% - Play x1 through the sound card.
+% - Make x2 a swept frequency chirp from 1 kHz to 3 kHz.
+% - Play x2 through the sound card.
+% - Make x3 = x1 + x2.
+% - Play x3 through the sound card.
+% - Apply a lowpass digital Butterworth filter to x3 to
+% keep the pure tone and reject the chirp.
+% - Play the filtered signal through the sound card.
+% - Apply a highpass digital Butterworth filter to x3 to
+% keep the chirp and reject the pure tone.
+% - Play the filtered signal through the sound card.
+%
+Fs = 44100; % sampling frequency in Hz
+N = Fs * 4; % length of the 4 sec signal
+n = 0:N-1; % discrete time variable
+% Make x1 a 250 Hz pure tone
+f_analog = 250; % pure tone analog frequency
+w_dig = 2*pi*f_analog/Fs; % radian digital frequency
+x1 = cos(w_dig * n); % the pure tone
+sound(x1,Fs,16); % play it through sound card
+pause(5); % wait for sound card to clear
+% Make x2 a chirp. Sweep analog freq from 1 kHz to 3 kHz
+f_start_analog = 1000;
+w_start_dig = 2*pi*f_start_analog/Fs;
+f_stop_analog = 3000;
+w_stop_dig = 2*pi*f_stop_analog/Fs;
+phi = (w_stop_dig-w_start_dig)/(2*(N-1))*(n.*n) + w_start_dig*n;
+x2 = cos(phi);
+sound(x2,Fs,16); % play it through sound card
+pause(5); % wait for sound card to clear
+% Add the two signals
+x3 = x1 + x2;
+x3 = x3 / max(abs(x3)); % normalize the range to [-1,1]
+sound(x3,Fs,16); % play it through sound card
+pause(5); % wait for sound card to clear
+% Use a lowpass digital Butterworth filter to keep the 250 Hz
+% pure tone and reject the chirp.
+Wp = w_dig/pi; % normalized passband edge freq
+Ws = w_start_dig/pi; % normalized stopband edge freq
+Rp = 1; % max passband ripple
+Rs = 60; % min stopband attenuation
+[Nf, Wn] = buttord(Wp,Ws,Rp,Rs); % design filter order
+[num,den] = butter(Nf,Wn); % design the filter
+h=fvtool(num,den); % show frequency response
+figure(2);
+freqz(num,den,1024); % plot frequency response
+title('Lowpass Frequency Response');
+y1 = filter(num,den,x3); % apply the filter
+y1 = y1 / max(abs(y1)); % normalize filtered signal
+sound(y1,Fs,16); % play it through sound card
+pause(5); % wait for sound card to clear
+% Use a highpass digital Butterworth filter to keep the chirp
+% and reject the 250 Hz pure tone.
+Ws = w_dig/pi; % normalized stopband edge freq
+Wp = w_start_dig/pi; % normalized passband edge freq
+Rp = 1; % max passband ripple
+Rs = 60; % min stopband attenuation
+[Nf, Wn] = buttord(Wp,Ws,Rp,Rs); % design filter order
+[num2,den2] = butter(Nf,Wn,'high'); % design the filter
+Hd = dfilt.df1(num2,den2); % make filter object
+addfilter(h,Hd); % add filter 2 to fvtool
+figure(3);
+freqz(num2,den2,1024); % plot frequency response
+title(' Highpass Frequency Response');
+title(' Highpass Frequency Response');
+y2 = filter(num2,den2,x3); % apply the filter
+y2 = y2 / max(abs(y2)); % normalize filtered signal
+sound(y2,Fs,16); % play it through sound card
+diary off
+oject3.m
+Exception in thread "AWT-EventQueue-0" java.lang.OutOfMemoryError: Java heap space
+	at javax.swing.text.GapContent.allocateArray(GapContent.java:94)
+	at javax.swing.text.GapVector.resize(GapVector.java:214)
+	at javax.swing.text.GapVector.shiftEnd(GapVector.java:229)
+	at javax.swing.text.GapContent.shiftEnd(GapContent.java:345)
+	at javax.swing.text.GapVector.open(GapVector.java:201)
+	at javax.swing.text.GapVector.replace(GapVector.java:142)
+	at javax.swing.text.GapContent.insertString(GapContent.java:132)
+	at javax.swing.text.AbstractDocument.handleInsertString(AbstractDocument.java:723)
+	at javax.swing.text.AbstractDocument.insertString(AbstractDocument.java:707)
+	at javax.swing.text.PlainDocument.insertString(PlainDocument.java:130)
+	at javax.swing.text.DefaultEditorKit.read(DefaultEditorKit.java:238)
+	at com.mathworks.widgets.datamodel.TextFileBackingStore.readIntoDocument(TextFileBackingStore.java:206)
+	at com.mathworks.widgets.datamodel.TextFileBackingStore.loadDocumentFromFile(TextFileBackingStore.java:175)
+	at com.mathworks.widgets.datamodel.TextFileBackingStore.doLoad(TextFileBackingStore.java:247)
+	at com.mathworks.widgets.datamodel.TextFileBackingStore.doLoad(TextFileBackingStore.java:32)
+	at com.mathworks.widgets.datamodel.AbstractBackingStore.load(AbstractBackingStore.java:114)
+	at com.mathworks.mde.editor.EditorView.reload(EditorView.java:410)
+	at com.mathworks.mde.editor.EditorView.promptToReloadIfNecessary(EditorView.java:444)
+	at com.mathworks.mde.editor.EditorViewClient.setActive(EditorViewClient.java:504)
+	at com.mathworks.mde.editor.EditorViewClient.access$1200(EditorViewClient.java:79)
+	at com.mathworks.mde.editor.EditorViewClient$12.clientActivated(EditorViewClient.java:843)
+	at com.mathworks.widgets.desk.DTClient.fireClientEvent(DTClient.java:1381)
+	at com.mathworks.widgets.desk.DTClient.itemStateChanged(DTClient.java:1571)
+	at com.mathworks.widgets.desk.DTInternalFrame.setSelected(DTInternalFrame.java:364)
+	at com.mathworks.widgets.desk.DTClient.setSelected(DTClient.java:481)
+	at com.mathworks.widgets.desk.DTOccupant.setSelected(DTOccupant.java:822)
+	at com.mathworks.widgets.desk.DTOccupant.setSelected(DTOccupant.java:810)
+	at com.mathworks.widgets.desk.DTClient.activate(DTClient.java:1429)
+	at com.mathworks.widgets.desk.DTClient$ClientSelectAction.actionPerformed(DTClient.java:1864)
+	at com.mathworks.widgets.desk.DTDocumentTabs$Tab.select(DTDocumentTabs.java:1210)
+	at com.mathworks.widgets.desk.DTDocumentTabs$Tab.mouseReleased(DTDocumentTabs.java:1681)
+	at java.awt.AWTEventMulticaster.mouseReleased(AWTEventMulticaster.java:290)
+run Project3.m
+uiopen('C:\Users\Will\Documents\MATLAB\1p1.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1bp1.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1p1.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1p1.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1p1.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1p1.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1p2.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1p1.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1p1.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\2ap2.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1p1.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1p1.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1p2.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1p3.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1bp1.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1bp2.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\1bp3.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\2ap2.fig',1)
+uiopen('C:\Users\Will\Documents\MATLAB\2ap3.fig',1)
+run Project2.m
+run Project3.m

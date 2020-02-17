@@ -1,0 +1,111 @@
+%----------------------------------------------------------
+% P1a
+%
+% Make a 2 second digital audio signal that contains a pure
+% cosine tone with analog frequency 5000 Hz.
+% - play the signal through the sound card
+% - plot the centered DFT magnitude in dB against
+% Hertzian analog freq, radian digital freq,
+% and normalized digital freq.
+% - Write the signal to a wave file, read it back in, and
+% play it through the sound card again.
+%
+Fs = 44100; % sampling frequency in Hz
+N = Fs * 2; % length of the 2 sec signal
+n = 0:N-1; % discrete time variable
+f_analog = 440; % analog frequency in Hz
+w_dig = 2*pi*f_analog/Fs; % radian digital frequency
+x = cos(w_dig * n); % the signal
+% Normalize samples to the range [-1,1]
+% Not really needed here b/c cos is already in this range,
+% but done anyway to illustrate how you normalize.
+x = x / max(abs(x));
+sound(x,Fs,16); % play it through sound card
+X = fftshift(fft(x)); % centered DFT
+Xmag = abs(X); % centered DFT magnitude
+XmagdB = 20*log10(Xmag); % convert to dB
+% Plot the centered magnitude against analog frequency
+w = -pi:2*pi/N:pi-2*pi/N; % dig rad freq vector
+f = w * Fs /(2*pi); % analog freq vector
+figure(1);
+plot(f,XmagdB);
+xlim([-20000 20000]);
+title('Centered DFT Magnitude for 440 Hz Pure Tone');
+xlabel('analog frequency, Hz');
+ylabel('dB');
+% Plot the centered magnitude against radian digital freq
+figure(2);
+plot(w,XmagdB);
+xlim([-pi pi]);
+title('Centered DFT Magnitude for 440 Hz Pure Tone');
+xlabel('radian digital frequency \omega');
+ylabel('dB');
+% Plot against normalized digital frequency
+figure(3);
+plot(w/pi,XmagdB);
+xlim([-1 1]);
+title('Centered DFT Magnitude for 440 Hz Pure Tone');
+xlabel('normalized digital frequency \omega/\pi');
+ylabel('dB');
+% wait 3 seconds in case sound card is still busy
+pause(3);
+audiowrite('A-440.wav',x,Fs); % write to wave file
+[x2,Fs] = audioread('A-440.wav'); % read it back in
+sound(x2,Fs,16); % play it again Sam!
+diary off
+
+%----------------------------------------------------------
+% P1b
+%
+% Make a 2 second digital audio signal that contains a pure
+% cosine tone with analog frequency 5000 Hz.
+% - play the signal through the sound card
+% - plot the centered DFT magnitude in dB against
+% Hertzian analog freq, radian digital freq,
+% and normalized digital freq.
+% - Write the signal to a wave file, read it back in, and
+% play it through the sound card again.
+%
+Fs = 44100; % sampling frequency in Hz
+N = Fs * 2; % length of the 2 sec signal
+n = 0:N-1; % discrete time variable
+f_analog = 5000; % analog frequency in Hz
+w_dig = 2*pi*f_analog/Fs; % radian digital frequency
+x = cos(w_dig * n); % the signal
+% Normalize samples to the range [-1,1]
+% Not really needed here b/c cos is already in this range,
+% but done anyway to illustrate how you normalize.
+x = x / max(abs(x));
+sound(x,Fs,16); % play it through sound card
+X = fftshift(fft(x)); % centered DFT
+Xmag = abs(X); % centered DFT magnitude
+XmagdB = 20*log10(Xmag); % convert to dB
+% Plot the centered magnitude against analog frequency
+w = -pi:2*pi/N:pi-2*pi/N; % dig rad freq vector
+f = w * Fs /(2*pi); % analog freq vector
+figure(1);
+plot(f,XmagdB);
+xlim([-20000 20000]);
+title('Centered DFT Magnitude for 5000 Hz Pure Tone');
+xlabel('analog frequency, Hz');
+ylabel('dB');
+% Plot the centered magnitude against radian digital freq
+figure(2);
+plot(w,XmagdB);
+xlim([-pi pi]);
+title('Centered DFT Magnitude for 5000 Hz Pure Tone');
+xlabel('radian digital frequency \omega');
+ylabel('dB');
+% Plot against normalized digital frequency
+figure(3);
+plot(w/pi,XmagdB);
+xlim([-1 1]);
+title('Centered DFT Magnitude for 5000 Hz Pure Tone');
+xlabel('normalized digital frequency \omega/\pi');
+ylabel('dB');
+% wait 3 seconds in case sound card is still busy
+pause(3);
+audiowrite('A-5000.wav',x,Fs); % write to wave file
+[x2,Fs] = audioread('A-5000.wav'); % read it back in
+sound(x2,Fs,16); % play it again Sam!
+diary off

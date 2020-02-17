@@ -1,0 +1,52 @@
+%-----Part a----------
+[x1,Fs] = audioread('noisysig.wav'); %1st signal
+[x2,Fs] = audioread('noisesamp.wav');%2nd signal
+
+%sound(x1,Fs,16);%play sound
+%pause;
+
+X1 = fftshift(fft(x1)); % centered DFT 
+
+N1 = length(x1); % length signal 1
+
+figure(1);
+plot([-1:2/N1:1-2/N1],20*log10(abs(X1)));
+grid on;
+title('Centered DFT Mag of Noisy Signal');
+xlabel('Normalized Frequency \omega/\pi');
+ylabel('Magnitude(dB)');
+
+X2 = fftshift(fft(x2));
+N2 = length(x2);
+
+figure(2);
+plot([-1:2/N2:1-2/N2],20*log10(abs(X2)));
+grid on;
+title('Centered DFT Mag of Noise');
+xlabel('Normalized Frequency \omega/\pi');
+ylabel('Magnitude(dB)');
+
+%------ part C/D--------
+% Use a lowpass digital Butterworth filter to keep the 250 Hz
+% pure tone and reject the chirp.
+
+% Human speech is usually between around 1000 - 5000 hz, 
+% also, the noise seems to be mostly limited to what's below 1000 Hz
+% so Im giving the noise about 250Hz of extra leeway
+Ws = 5250/44100; % normalized stopband edge freq
+Wp = 1250/44100; % normalized passband edge freq 
+
+Rp = 1; % max passband ripple
+Rs = 60; % min stopband attenuation
+[Nf, Wn] = buttord(Wp,Ws,Rp,Rs); % design filter order
+%Nf should be 6... which is less than 12
+[num,den] = butter(Nf,Wn); % designed the filter
+y1 = filter(num,den,x1); % Part D apply the filter
+y1 = y1 / max(abs(y1)); % normalize filtered signal
+sound(y1,Fs,16); % play it through sound card
+audiowrite('filteredsig.wav',y1,Fs); %  Copy out our filtered Signal
+
+pause; % wait for sound card to clear
+
+
+
