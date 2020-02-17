@@ -1,4 +1,4 @@
-#Code by Emily Knox Version 1????
+#Code by Will Ruzicka
 # This code takes the csv file provided by IntSights for a 'credential leak including clear text passwords' alert.
 # It checks if passwords meet OU requirements and filters out entries that don't - which is usually a lot.
 # A new file is created that contains a list of the credentials with potentially valid passwords.
