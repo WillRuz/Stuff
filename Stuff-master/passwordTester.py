@@ -1,4 +1,4 @@
- Code by Will Ruzicka Ver 1.0,  Takes a 2 row csv (email password) and tests
+# Code by Will Ruzicka Ver 1.0,  Takes a 2 row csv (email password) and tests
 # for authentication via the mail server listed in code.
 import csv
 import imaplib
